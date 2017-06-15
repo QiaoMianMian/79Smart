@@ -230,7 +230,7 @@ public class BleControlActivity extends AppCompatActivity implements View.OnClic
             findViewById(R.id.btn_history_step).setClickable(true);
             if (TextUtils.equals((String) result, "Completed")) {
 //                BleSend.getInstance().clearStepFlash(this);
-                setText("Step Clear");
+                setText("Step Sync Completed");
             }
         } else if (code == BleCode.CURRENTSLEEP) { //[active,light,deep,sleep start,sleep end]
             setText(code + ", " + result);
@@ -239,7 +239,7 @@ public class BleControlActivity extends AppCompatActivity implements View.OnClic
             findViewById(R.id.btn_history_sleep).setClickable(true);
             if (TextUtils.equals((String) result, "Completed")) {
 //                BleSend.getInstance().clearSleepFlash(this);
-                setText("Sleep Clear");
+                setText("Sleep Sync Completed");
             }
         } else if (code == BleCode.DEVICEVERSION) {
             setText(code + ", " + result);
