@@ -115,7 +115,7 @@ public class BleControlActivity extends AppCompatActivity implements View.OnClic
             BluetoothDevice device = mBleService.gatt.getDevice();
             if (device != null) {
                 DfuServiceInitiator starter = new DfuServiceInitiator(device.getAddress()).setDeviceName(device.getName()).setKeepBond(false);
-                starter.setZip(R.raw.v105_207_20170615);
+                starter.setZip(R.raw.v105_207_20170616);
                 starter.start(this, BleDfuService.class);
             } else {
                 Log.e(TAG, "device = null");
