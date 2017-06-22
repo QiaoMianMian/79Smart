@@ -202,6 +202,11 @@ public class BleControlActivity extends AppCompatActivity implements View.OnClic
                     Toast.makeText(this, "BLE_DISCONNECT", Toast.LENGTH_SHORT).show();
                 }
                 break;
+            case R.id.btn_reset:
+                if (BleContants.STATE_BLE_CONNECTED) {
+                    BleSend.getInstance().sendReset(this);
+                }
+                break;
         }
     }
 

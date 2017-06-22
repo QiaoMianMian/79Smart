@@ -418,4 +418,15 @@ public class BleDataset {
         data[19] = (byte) (count & 0xFF);
         return data;
     }
+
+
+    /**
+     * RESET
+     */
+    public static byte[] setReset() {
+        byte[] data = new byte[20];
+        data[0] = 0x5A;
+        data[1] = 0x1F;
+        return data;
+    }
 }

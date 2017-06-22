@@ -227,11 +227,13 @@
                     android:text="@string/upload_device"/>
 
                 <Button
+                    android:id="@+id/btn_reset"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_margin="5dip"
                     android:layout_weight="1"
-                    android:visibility="invisible"/>
+                    android:onClick="onClick"
+                    android:text="@string/device_reset"/>
             </LinearLayout>
 
             <ProgressBar

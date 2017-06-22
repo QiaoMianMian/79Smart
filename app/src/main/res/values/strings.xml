@@ -11,6 +11,7 @@
     <string name="no_device">NO DEVICE</string>
     <string name="upload_device">DEVICE UPGRADE</string>
     <string name="upload_device_notify">Are you sure you want to cancel the device upgrade?</string>
+    <string name="device_reset">Reset</string>
     <string name="device_type">Device Type</string>
     <string name="device_sn_code">Device Code</string>
     <string name="software_version">Software Version</string>

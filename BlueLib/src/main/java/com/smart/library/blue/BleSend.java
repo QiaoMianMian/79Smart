@@ -258,6 +258,15 @@ public class BleSend {
     }
 
     /**
+     * Reset
+     *
+     * @param context
+     */
+    public boolean sendReset(Context context) {
+        return BleUtils.writeToBle(context, BleDataset.setReset());
+    }
+
+    /**
      * Clear Step Flash
      */
     public boolean clearStepFlash(Context context) {
