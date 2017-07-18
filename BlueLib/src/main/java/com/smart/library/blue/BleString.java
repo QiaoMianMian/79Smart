@@ -41,7 +41,7 @@ public class BleString {
         if (data != null && data.size() > 19) {
             int checkCount = shift(data.get(18), data.get(19));
             int checkAnd = BleString.intCheckAnd(data);
-            BleLogs.i("checkCount:" + checkCount + ",checkAnd" + checkAnd);
+            BleLogs.i("checkCount:" + checkCount + ",checkAnd:" + checkAnd);
             return (checkCount == checkAnd);
         }
         return false;

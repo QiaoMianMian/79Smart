@@ -161,7 +161,7 @@ public class BleReceiver extends BroadcastReceiver {
                             count = mStepCount % 6;
                         }
                         for (int i = 1; i <= count; i++) {
-                            long time = mStepStartTime + (i + (number - 1) * 6) * 10 * 60;
+                            long time = mStepStartTime + ((i - 1) + (number - 1) * 6) * 10 * 60;
                             //ignore error date data
                             long currentLong = new Date().getTime() / 1000;
                             if (time > currentLong) {
@@ -180,7 +180,10 @@ public class BleReceiver extends BroadcastReceiver {
                 BleLogs.i(TAG, index + ", " + mStepIndex + ", " + number + ", " + mStepSynch + ", " + mStepPackege);
                 // (number == 0 && mStepSynch == 0)   Not synchronized time the first one send cmd
                 // (number > 0 && number == mStepPackege)  synchronization time the last one send cmd
-                if (index < mStepIndex && ((number == 0 && mStepSynch == 0) || (number > 0 && number == mStepPackege))) {
+                //(mStepPackege == 0 && mStepSynch == 1)  have Index  but not have package
+                if (index < mStepIndex && ((number == 0 && mStepSynch == 0) || (number > 0 && number == mStepPackege)
+                        || (mStepPackege == 0 && mStepSynch == 1))) {
+                    BleLogs.i(TAG, "send index =[" + (index + 1) + "] get data");
                     BleSend.getInstance().synchStep(context, (index + 1));
                 }
                 //synchronized completed

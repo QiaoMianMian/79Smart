@@ -2,8 +2,10 @@ package com.smartjewelry.blue105;
 
 
 import android.app.ActivityManager;
+import android.app.AlertDialog;
 import android.bluetooth.BluetoothDevice;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -204,7 +206,7 @@ public class BleControlActivity extends AppCompatActivity implements View.OnClic
                 break;
             case R.id.btn_reset:
                 if (BleContants.STATE_BLE_CONNECTED) {
-                    BleSend.getInstance().sendReset(this);
+                    resetDialog();
                 }
                 break;
         }
@@ -262,5 +264,25 @@ public class BleControlActivity extends AppCompatActivity implements View.OnClic
     public void onCancelUpload() {
         pb_dfu_upload.setIndeterminate(true);
         btn_upgrade.setText(R.string.software_upgrade);
+    }
+
+    private void resetDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);  //先得到构造器
+        builder.setTitle("Reset"); //设置标题
+        builder.setMessage("Reset Device Data?"); //设置内容
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+                BleSend.getInstance().sendReset(BleControlActivity.this);
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        builder.create().show();
     }
 }
