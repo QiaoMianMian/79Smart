@@ -143,7 +143,7 @@ public class BleReceiver extends BroadcastReceiver {
                             (2000 + data.get(4)), data.get(5), data.get(6), data.get(7), data.get(8))) / 1000;
                     mStepPackege = data.get(11) * 255 + data.get(12);
                     mStepSynch = data.get(13);
-                    BleLogs.i(TAG, mStepCount + ", " + mStepStartTime + ", " + mStepPackege + ", " + mStepSynch);
+                    BleLogs.i(TAG, mStepCount + ", " + DateUtils.long2MinuteString(mStepStartTime) + ", " + mStepPackege + ", " + mStepSynch);
                 } else {
                     if (mStepSynch == 0) {  // time no synchronization
 
@@ -164,15 +164,15 @@ public class BleReceiver extends BroadcastReceiver {
                             long time = mStepStartTime + ((i - 1) + (number - 1) * 6) * 10 * 60;
                             //ignore error date data
                             long currentLong = new Date().getTime() / 1000;
-                            if (time > currentLong) {
-                                BleLogs.e(TAG, "Device:" + DateUtils.long2SecondString(time) + ",Current: "
-                                        + DateUtils.long2SecondString(currentLong));
+                            long startLong = DateUtils.dayString2Long("2017-01-01") / 1000;
+                            if (time < startLong || time > currentLong) {
+                                BleLogs.e(TAG, "Invalid step:" + DateUtils.long2SecondString(time));
                                 continue;
                             }
 
                             String timer = DateUtils.long2TenString(time);
                             int steps = d[i - 1];
-//                            BleLogs.i(TAG, number + ", " + mStepPackege + ", " + mStepCount + ", " + timer + ", " + steps);
+                            BleLogs.i(TAG, number + ", " + mStepPackege + ", " + mStepCount + ", " + timer + ", " + steps);
                             DbUtils.replaceStep(context, String.valueOf(steps), timer);
                         }
                     }
@@ -183,7 +183,6 @@ public class BleReceiver extends BroadcastReceiver {
                 //(mStepPackege == 0 && mStepSynch == 1)  have Index  but not have package
                 if (index < mStepIndex && ((number == 0 && mStepSynch == 0) || (number > 0 && number == mStepPackege)
                         || (mStepPackege == 0 && mStepSynch == 1))) {
-                    BleLogs.i(TAG, "send index =[" + (index + 1) + "] get data");
                     BleSend.getInstance().synchStep(context, (index + 1));
                 }
                 //synchronized completed
@@ -243,7 +242,6 @@ public class BleReceiver extends BroadcastReceiver {
                     mSleepSumEndTime = DateUtils.minuteString2Long(
                             DateUtils.combinMinuteString((2000 + data.get(9)), data.get(10), data.get(11), data.get(12), data.get(13))) / 1000;
                     mSleepSumSynch = data.get(14);
-                    BleLogs.i(TAG, mSleepSumStartTime + ", " + mSleepSumEndTime + ", " + mSleepSumSynch);
                 } else {
                     if (mSleepSumSynch == 0) {  // time no synchronization
 
@@ -254,8 +252,14 @@ public class BleReceiver extends BroadcastReceiver {
                         String start = DateUtils.long2MinuteString(mSleepSumStartTime);
                         String end = DateUtils.long2MinuteString(mSleepSumEndTime);
                         String date = DateUtils.long2DayString(mSleepSumStartTime);
-                        BleLogs.i(TAG, active + ", " + deep + ", " + light + ", " + start + ", " + end + "," + date);
-                        DbUtils.replaceSleepSum(context, active, light, deep, start, end, date);
+//                        BleLogs.i(TAG, active + ", " + deep + ", " + light + ", " + start + ", " + end + "," + date);
+                        long currentLong = new Date().getTime() / 1000;
+                        long startLong = DateUtils.dayString2Long("2017-01-01") / 1000;
+                        if (mSleepSumStartTime < startLong || mSleepSumStartTime > currentLong) {
+                            BleLogs.e(TAG, "Invalid sleep:" + DateUtils.long2SecondString(mSleepSumStartTime));
+                        } else {
+                            DbUtils.replaceSleepSum(context, active, light, deep, start, end, date);
+                        }
                     }
                 }
                 BleLogs.i(TAG, index + ", " + mSleepSumIndex + ", " + number + ", " + mSleepSumSynch);

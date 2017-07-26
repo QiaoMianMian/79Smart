@@ -120,8 +120,10 @@ public class DeviceListAdapter extends BaseAdapter {
                 if (view == null) {
                     view = inflater.inflate(R.layout.device_list_title, parent, false);
                 }
-                final TextView title = (TextView) view;
-                title.setText((Integer) getItem(position));
+                if (view instanceof TextView) {
+                    final TextView title = (TextView) view;
+                    title.setText((Integer) getItem(position));
+                }
                 break;
             default:
                 if (view == null) {
@@ -136,9 +138,11 @@ public class DeviceListAdapter extends BaseAdapter {
                 final BleDevice device = (BleDevice) getItem(position);
                 final ViewHolder holder = (ViewHolder) view.getTag();
                 final String name = device.name;
-                holder.name.setText(name != null ? name : "n/a");
-                holder.address.setText(device.device.getAddress());
-                holder.rssi.setText(device.rssi + "");
+                if (holder != null) {
+                    holder.name.setText(name != null ? name : "n/a");
+                    holder.address.setText(device.device.getAddress());
+                    holder.rssi.setText(device.rssi + "");
+                }
                 break;
         }
         return view;
