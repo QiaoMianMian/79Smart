@@ -53,6 +53,10 @@ public class BleControlActivity extends AppCompatActivity implements View.OnClic
 
     private Button btn_upgrade;
 
+    private Button btn_sync_step;
+
+    private Button btn_sync_sleep;
+
     private ProgressBar pb_dfu_upload;
 
     private BleDfuListener mDfuListener;
@@ -99,6 +103,10 @@ public class BleControlActivity extends AppCompatActivity implements View.OnClic
     private void initViews() {
         mBlueName = (TextView) findViewById(R.id.blue_name);
         mBlueState = (TextView) findViewById(R.id.blue_state);
+
+        btn_sync_step = (Button) findViewById(R.id.btn_step_sync);
+
+        btn_sync_sleep = (Button) findViewById(R.id.btn_sleep_sync);
 
         btn_upgrade = (Button) findViewById(R.id.btn_upgrade);
 
@@ -168,6 +176,7 @@ public class BleControlActivity extends AppCompatActivity implements View.OnClic
                 break;
             case R.id.btn_step_sync:
                 BleSend.getInstance().synchStep(this);//Synch History Step
+                btn_sync_step.setEnabled(false);
                 break;
             case R.id.btn_history_step:                 //Get History Step
                 String stepTxt = "";
@@ -184,6 +193,7 @@ public class BleControlActivity extends AppCompatActivity implements View.OnClic
                 break;
             case R.id.btn_sleep_sync:
                 BleSend.getInstance().synchSleepSum(this);//Synch History Sleep
+                btn_sync_sleep.setEnabled(false);
                 break;
             case R.id.btn_history_sleep:            //Get History Sleep
                 String sleepTxt = "";
@@ -236,19 +246,19 @@ public class BleControlActivity extends AppCompatActivity implements View.OnClic
             setText(code + ", " + result);
         } else if (code == BleCode.HISTORYSTEPS) {
             setText(code + ", " + result);
-            findViewById(R.id.btn_history_step).setClickable(true);
             if (TextUtils.equals((String) result, "Completed")) {
 //                BleSend.getInstance().clearStepFlash(this);
                 setText("Step Sync Completed");
+                btn_sync_step.setEnabled(true);
             }
         } else if (code == BleCode.CURRENTSLEEP) { //[active,light,deep,sleep start,sleep end]
             setText(code + ", " + result);
         } else if (code == BleCode.HISTORYSLEEP) {
             setText(code + ", " + result);
-            findViewById(R.id.btn_history_sleep).setClickable(true);
             if (TextUtils.equals((String) result, "Completed")) {
 //                BleSend.getInstance().clearSleepFlash(this);
                 setText("Sleep Sync Completed");
+                btn_sync_sleep.setEnabled(true);
             }
         } else if (code == BleCode.DEVICEVERSION) {
             setText(code + ", " + result);
