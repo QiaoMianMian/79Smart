@@ -39,7 +39,7 @@ public class DbHelper extends DbHelperEx {
 
         db.execSQL("CREATE table IF NOT EXISTS "
                 + TB_SLEEP
-                + " (id INTEGER PRIMARY KEY AUTOINCREMENT,active TEXT,light TEXT, deep TEXT,start TEXT,end TEXT,date TEXT UNIQUE);");
+                + " (id INTEGER PRIMARY KEY AUTOINCREMENT,active TEXT,light TEXT, deep TEXT,start TEXT,end TEXT,date TEXT);");
     }
 
     @Override

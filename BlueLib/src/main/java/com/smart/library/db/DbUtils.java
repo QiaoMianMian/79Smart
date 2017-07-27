@@ -258,17 +258,21 @@ public class DbUtils {
      * @param context
      * @param date    yyyy-MM-dd
      */
-    public static SleepModel getSleepModel(Context context, String date) {
-        SleepModel model = new SleepModel();
+    public static List<SleepModel> getSleepModel(Context context, String date) {
+        List<SleepModel> models = new ArrayList<>();
         Cursor cursor = DbHelper.getInstance(context).rawQuery("select * from " + DbHelper.TB_SLEEP + "  where date == ? ", new String[]{date});
         try {
             if (cursor != null && cursor.getCount() > 0) {
-                cursor.moveToFirst();
-                model.setSleepActive(cursor.getInt(cursor.getColumnIndex("active")));
-                model.setSleepDeep(cursor.getInt(cursor.getColumnIndex("deep")));
-                model.setSleepLight(cursor.getInt(cursor.getColumnIndex("light")));
-                model.setSleepStartTime(cursor.getString(cursor.getColumnIndex("start")));
-                model.setSleepEndTime(cursor.getString(cursor.getColumnIndex("end")));
+                for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()) {
+//                    cursor.moveToFirst();
+                    SleepModel model = new SleepModel();
+                    model.setSleepActive(cursor.getInt(cursor.getColumnIndex("active")));
+                    model.setSleepDeep(cursor.getInt(cursor.getColumnIndex("deep")));
+                    model.setSleepLight(cursor.getInt(cursor.getColumnIndex("light")));
+                    model.setSleepStartTime(cursor.getString(cursor.getColumnIndex("start")));
+                    model.setSleepEndTime(cursor.getString(cursor.getColumnIndex("end")));
+                    models.add(model);
+                }
             }
         } catch (Exception e) {
             BleLogs.e(TAG, e.getMessage());
@@ -278,6 +282,15 @@ public class DbUtils {
                 cursor.close();
             }
         }
-        return model;
+        return models;
+    }
+
+    /**
+     * Clear the TB_SLEEP table
+     *
+     * @param context
+     */
+    public static void delAllSleep(Context context) {
+        DbHelper.getInstance(context).execSql("delete from " + DbHelper.TB_SLEEP);
     }
 }

@@ -224,6 +224,7 @@ public class BleReceiver extends BroadcastReceiver {
                 mSleepSumIndex = data.get(3);
                 if (mSleepSumIndex > 0) {
                     BleLogs.i(TAG, "mSleepSumIndex:" + mSleepSumIndex);
+                    DbUtils.delAllSleep(context);
                     BleSend.getInstance().synchSleepSum(context, 1);
                 }
             }
@@ -253,10 +254,12 @@ public class BleReceiver extends BroadcastReceiver {
                         String end = DateUtils.long2MinuteString(mSleepSumEndTime);
                         String date = DateUtils.long2DayString(mSleepSumStartTime);
 //                        BleLogs.i(TAG, active + ", " + deep + ", " + light + ", " + start + ", " + end + "," + date);
-                        long currentLong = new Date().getTime() / 1000;
-                        long startLong = DateUtils.dayString2Long("2017-01-01") / 1000;
+                        long currentLong = new Date().getTime() / 1000; //second
+                        long startLong = currentLong - 24 * 60 * 60 * 30 * 3; //three months ago
                         if (mSleepSumStartTime < startLong || mSleepSumStartTime > currentLong) {
-                            BleLogs.e(TAG, "Invalid sleep:" + DateUtils.long2SecondString(mSleepSumStartTime));
+                            BleLogs.e(TAG, "Invalid sleep:" + DateUtils.long2SecondString(mSleepSumStartTime)
+                                    + ", currentLong:" + DateUtils.long2SecondString(currentLong)
+                                    + ", startLong:" + DateUtils.long2SecondString(startLong));
                         } else {
                             DbUtils.replaceSleepSum(context, active, light, deep, start, end, date);
                         }

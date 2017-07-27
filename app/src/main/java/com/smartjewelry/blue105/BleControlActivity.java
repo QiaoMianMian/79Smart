@@ -189,9 +189,11 @@ public class BleControlActivity extends AppCompatActivity implements View.OnClic
                 String sleepTxt = "";
                 List<String> sleepPeriods = DbUtils.getSleepPeriodDate(this);
                 for (String date : sleepPeriods) {
-                    SleepModel model = DbUtils.getSleepModel(this, date);
-                    sleepTxt += date + ":[" + model.getSleepActive() + "," + model.getSleepLight() + "," + model.getSleepDeep()
-                            + "," + model.getSleepStartTime() + "," + model.getSleepEndTime() + "]\n";
+                    List<SleepModel> models = DbUtils.getSleepModel(this, date);
+                    for (SleepModel model : models) {
+                        sleepTxt += date + ":[" + model.getSleepActive() + "," + model.getSleepLight() + "," + model.getSleepDeep()
+                                + "," + model.getSleepStartTime() + "," + model.getSleepEndTime() + "]\n";
+                    }
                 }
                 Log.i(TAG, sleepTxt);
                 setText(sleepTxt);
@@ -199,14 +201,14 @@ public class BleControlActivity extends AppCompatActivity implements View.OnClic
 
             case R.id.btn_upgrade:
                 if (BleContants.STATE_BLE_CONNECTED) {
-                    upgrade();
+                    showDialog("Upgrade", "Upgrade firmware?");
                 } else {
                     Toast.makeText(this, "BLE_DISCONNECT", Toast.LENGTH_SHORT).show();
                 }
                 break;
             case R.id.btn_reset:
                 if (BleContants.STATE_BLE_CONNECTED) {
-                    resetDialog();
+                    showDialog("Reset", "Reset Device Data?");
                 }
                 break;
         }
@@ -266,15 +268,19 @@ public class BleControlActivity extends AppCompatActivity implements View.OnClic
         btn_upgrade.setText(R.string.software_upgrade);
     }
 
-    private void resetDialog() {
+    private void showDialog(final String title, String message) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);  //先得到构造器
-        builder.setTitle("Reset"); //设置标题
-        builder.setMessage("Reset Device Data?"); //设置内容
+        builder.setTitle(title); //设置标题
+        builder.setMessage(message); //设置内容
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
-                BleSend.getInstance().sendReset(BleControlActivity.this);
+                if (TextUtils.equals("Reset", title)) {
+                    BleSend.getInstance().sendReset(BleControlActivity.this);
+                } else if (TextUtils.equals("Upgrade", title)) {
+                    upgrade();
+                }
             }
         });
         builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
