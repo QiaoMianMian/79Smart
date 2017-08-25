@@ -37,7 +37,7 @@ android {
         variant.outputs.each { output ->
             def outputFile = output.outputFile
             if (outputFile != null && outputFile.name.endsWith('.apk') && !outputFile.name.contains("debug")) {
-                def fileName = "105_v" + "${defaultConfig.versionName}_17" + new Date().format("MMdd") + "-" + variant.baseName + ".apk"
+                def fileName = "79SmartDemo" + new Date().format("MMdd") + ".apk"
                 output.outputFile = new File(outputFile.parent, fileName)
             }
         }
