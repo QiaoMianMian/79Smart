@@ -167,14 +167,13 @@ public class BleReceiver extends BroadcastReceiver {
                         }
                         for (int i = 1; i <= count; i++) {
                             /**
-                             * 1   10*60 second
                              * (i - 1)  a pieces of data
                              * (number - 1)  a number of packages(starting from the second pack)
                              *  3  a pack of 3 data
                              * 10  a data for 10 minutes
                              * 60  a hour = 60 minutes
                              */
-                            long time = mStepStartTime + (1 + ((i - 1) + (number - 1) * 3)) * 10 * 60;
+                            long time = mStepStartTime + ((i - 1) + (number - 1) * 3) * 10 * 60;
                             //ignore error date data
                             long currentLong = new Date().getTime() / 1000;
                             long startLong = DateUtils.dayString2Long("2017-01-01") / 1000;
