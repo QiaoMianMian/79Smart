@@ -429,4 +429,16 @@ public class BleDataset {
         data[1] = 0x1F;
         return data;
     }
+
+    /**
+     * Sleep monitoring switch (1:Turn on sleep monitoring   0:Turn off sleep monitoring)
+     */
+    public static byte[] setSleepSumSwitch(int state) {
+        byte[] data = new byte[20];
+        data[0] = 0x5A;
+        data[1] = 0x34;
+        data[2] = 0x00;
+        data[3] = (byte) (state & 0xFF);
+        return data;
+    }
 }

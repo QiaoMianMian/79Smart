@@ -61,6 +61,8 @@ public class BleControlActivity extends AppCompatActivity implements View.OnClic
 
     private BleDfuListener mDfuListener;
 
+    private int mSleepState = 0;  //Sleep Switch State
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -125,7 +127,7 @@ public class BleControlActivity extends AppCompatActivity implements View.OnClic
             BluetoothDevice device = mBleService.gatt.getDevice();
             if (device != null) {
                 DfuServiceInitiator starter = new DfuServiceInitiator(device.getAddress()).setDeviceName(device.getName()).setKeepBond(false);
-                starter.setZip(R.raw.v105_207_20170616);
+                starter.setZip(R.raw.v105_212_20170825);
                 starter.start(this, BleDfuService.class);
             } else {
                 Log.e(TAG, "device = null");
@@ -188,8 +190,22 @@ public class BleControlActivity extends AppCompatActivity implements View.OnClic
                 Log.i(TAG, stepTxt);
                 setText(stepTxt);
                 break;
+            case R.id.btn_history_duration:
+                String durationTxt = "";
+                List<String> durationPeriods = DbUtils.getStepPeriodDate(this);
+                for (String date : durationPeriods) {
+                    String durations = DbUtils.getOneDayDurations(this, date);
+                    durationTxt += date + ":[" + durations + "]\n";
+                }
+                Log.i(TAG, durationTxt);
+                setText(durationTxt);
+                break;
             case R.id.btn_current_sleep:
                 BleSend.getInstance().sendCurrentSleep(this); //Synch Current Sleep
+                break;
+            case R.id.btn_sleep_switch:
+                mSleepState = ((mSleepState == 0) ? 1 : 0);
+                BleSend.getInstance().sendSleepSumSwitch(this, mSleepState); //Sleep Switch
                 break;
             case R.id.btn_sleep_sync:
                 BleSend.getInstance().synchSleepSum(this);//Synch History Sleep
@@ -263,6 +279,8 @@ public class BleControlActivity extends AppCompatActivity implements View.OnClic
         } else if (code == BleCode.DEVICEVERSION) {
             setText(code + ", " + result);
         } else if (code == BleCode.DEVICEBATTERY) {
+            setText(code + ", " + result);
+        } else if (code == BleCode.SLEEPSWITCH) {
             setText(code + ", " + result);
         }
     }

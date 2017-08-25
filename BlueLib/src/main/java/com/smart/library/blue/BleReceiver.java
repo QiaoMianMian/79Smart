@@ -20,18 +20,18 @@ public class BleReceiver extends BroadcastReceiver {
 
     private BleImp mBleImp;
 
-    private static int mStepIndex = 0;
-    private static long mStepStartTime = 0;
-    private static int mStepCount = 0;
-    private static int mStepPackege = 0;
-    private static int mStepSynch = 0;
+    private static int mStepIndex = 0;  //Step Index
+    private static long mStepStartTime = 0;  //Step Start Time
+    private static int mStepCount = 0;   // Total number of Step
+    private static int mStepPackage = 0;  // Package number of Step
+    private static int mStepSynch = 0;  //Whether to synchronize time
 
-    private static int mSleepSumIndex = 0;
+    private static int mSleepSumIndex = 0;  //Sleep Index
     private static long mSleepSumStartTime = 0;
     private static long mSleepSumEndTime = 0;
-    private static long mSleepSumSynch = 0;
+    private static long mSleepSumSynch = 0; //Whether to synchronize time
 
-    private static String mSleepCurrenStartTime;
+    private static String mSleepCurrentStartTime;
     private static String mSleepCurrentEndTime;
 
     public BleReceiver(Context context, BleImp imp) {
@@ -50,6 +50,7 @@ public class BleReceiver extends BroadcastReceiver {
         mFilter.addAction(BleContants.ACTION_BLE_VERSION);
         mFilter.addAction(BleContants.ACTION_BLE_BATTERY);
         mFilter.addAction(BleContants.ACTION_BLE_FLASH_CLEAR);
+        mFilter.addAction(BleContants.ACTION_BLE_SLEEP_SWITCH);
         context.registerReceiver(this, mFilter);
     }
 
@@ -113,10 +114,10 @@ public class BleReceiver extends BroadcastReceiver {
                     int d8 = data.get(8);
                     int d9 = data.get(9);
                     int step = d6 | (d5 << 8) | (d4 << 16) | (d3 << 24);//ble
-                    float time = (d9 + (d8 * 60) + (d7 * 60 * 60)) / 60;
+                    int duration = (d9 + (d8 * 60) + (d7 * 60 * 60));
 
                     if (mBleImp != null) {
-                        mBleImp.onSuccess(BleCode.CURRENTSTEP, "" + step);
+                        mBleImp.onSuccess(BleCode.CURRENTSTEP, step + ", " + duration + "s");
                     }
                 }
             }
@@ -138,30 +139,42 @@ public class BleReceiver extends BroadcastReceiver {
                     return;
                 }
                 if (number == 0) {  // first data
-                    mStepCount = BleString.shift(data.get(9), data.get(10));
                     mStepStartTime = DateUtils.minuteString2Long(DateUtils.combinMinuteString(
                             (2000 + data.get(4)), data.get(5), data.get(6), data.get(7), data.get(8))) / 1000;
-                    mStepPackege = data.get(11) * 255 + data.get(12);
+                    mStepCount = BleString.shift(data.get(9), data.get(10)) / 2;
+                    mStepPackage = BleString.shift(data.get(11), data.get(12));
                     mStepSynch = data.get(13);
-                    BleLogs.i(TAG, mStepCount + ", " + DateUtils.long2MinuteString(mStepStartTime) + ", " + mStepPackege + ", " + mStepSynch);
+                    BleLogs.i(TAG, DateUtils.long2MinuteString(mStepStartTime) + ", "
+                            + DateUtils.long2MinuteString(mStepStartTime + mStepCount * 10 * 60) + ", "
+                            + mStepCount + ", " + mStepPackage + ", " + mStepSynch);
                 } else {
                     if (mStepSynch == 0) {  // time no synchronization
 
                     } else {   //time synchronization
                         int[] d = {
                                 BleString.shift(data.get(4), data.get(5)),
-                                BleString.shift(data.get(6), data.get(7)),
                                 BleString.shift(data.get(8), data.get(9)),
-                                BleString.shift(data.get(10), data.get(11)),
-                                BleString.shift(data.get(12), data.get(13)),
-                                BleString.shift(data.get(14), data.get(15))
+                                BleString.shift(data.get(12), data.get(13))
                         };
-                        int count = 6;
-                        if (number == mStepPackege && mStepCount % 6 != 0) {
-                            count = mStepCount % 6;
+                        int[] t = {
+                                BleString.duration(data.get(6), data.get(7)),
+                                BleString.duration(data.get(10), data.get(11)),
+                                BleString.duration(data.get(14), data.get(15))
+                        };
+                        int count = 3;
+                        if (number == mStepPackage && mStepCount % 3 != 0) {
+                            count = mStepCount % 3;
                         }
                         for (int i = 1; i <= count; i++) {
-                            long time = mStepStartTime + ((i - 1) + (number - 1) * 6) * 10 * 60;
+                            /**
+                             * 1   10*60 second
+                             * (i - 1)  a pieces of data
+                             * (number - 1)  a number of packages(starting from the second pack)
+                             *  3  a pack of 3 data
+                             * 10  a data for 10 minutes
+                             * 60  a hour = 60 minutes
+                             */
+                            long time = mStepStartTime + (1 + ((i - 1) + (number - 1) * 3)) * 10 * 60;
                             //ignore error date data
                             long currentLong = new Date().getTime() / 1000;
                             long startLong = DateUtils.dayString2Long("2017-01-01") / 1000;
@@ -172,22 +185,25 @@ public class BleReceiver extends BroadcastReceiver {
 
                             String timer = DateUtils.long2TenString(time);
                             int steps = d[i - 1];
-                            BleLogs.i(TAG, number + ", " + mStepPackege + ", " + mStepCount + ", " + timer + ", " + steps);
-                            DbUtils.replaceStep(context, String.valueOf(steps), timer);
+                            int duration = t[i - 1];
+                            BleLogs.i(TAG, number + ", " + mStepPackage + ", " + mStepCount + ", " + timer + ", " + steps + ", " + duration);
+                            DbUtils.replaceStep(context, String.valueOf(steps), timer, duration);
                         }
                     }
                 }
-                BleLogs.i(TAG, index + ", " + mStepIndex + ", " + number + ", " + mStepSynch + ", " + mStepPackege);
-                // (number == 0 && mStepSynch == 0)   Not synchronized time the first one send cmd
-                // (number > 0 && number == mStepPackege)  synchronization time the last one send cmd
-                //(mStepPackege == 0 && mStepSynch == 1)  have Index  but not have package
-                if (index < mStepIndex && ((number == 0 && mStepSynch == 0) || (number > 0 && number == mStepPackege)
-                        || (mStepPackege == 0 && mStepSynch == 1))) {
+                BleLogs.i(TAG, index + ", " + mStepIndex + ", " + number + ", " + mStepSynch + ", " + mStepPackage);
+                /**
+                 * (number == 0 && mStepSynch == 0)   Not synchronized time the first one send cmd
+                 * (number > 0 && number == mStepPackage)  synchronization time the last one send cmd
+                 * (mStepPackage == 0 && mStepSynch == 1)  have Index  but not have package
+                 */
+                if (index < mStepIndex && ((number == 0 && mStepSynch == 0) || (number > 0 && number == mStepPackage)
+                        || (mStepPackage == 0 && mStepSynch == 1))) {
                     BleSend.getInstance().synchStep(context, (index + 1));
                 }
                 //synchronized completed
                 if (mBleImp != null) {
-                    if ((index == mStepIndex) && (number == mStepPackege)) {
+                    if ((index == mStepIndex) && (number == mStepPackage)) {
                         mBleImp.onSuccess(BleCode.HISTORYSTEPS, "Completed");
                     } else {
                         mBleImp.onSuccess(BleCode.HISTORYSTEPS, "Synchronizing");
@@ -202,7 +218,7 @@ public class BleReceiver extends BroadcastReceiver {
                     return;
                 }
                 if (number == 0) {
-                    mSleepCurrenStartTime = DateUtils.combinMinuteString((2000 + data.get(4)), data.get(5), data.get(6), data.get(7), data.get(8));
+                    mSleepCurrentStartTime = DateUtils.combinMinuteString((2000 + data.get(4)), data.get(5), data.get(6), data.get(7), data.get(8));
                     mSleepCurrentEndTime = DateUtils.combinMinuteString((2000 + data.get(9)), data.get(10), data.get(11), data.get(12), data.get(13));
                 } else {
                     int active = BleString.shift(data.get(4), data.get(5));
@@ -213,7 +229,7 @@ public class BleReceiver extends BroadcastReceiver {
                         model.setSleepActive(active);
                         model.setSleepLight(light);
                         model.setSleepDeep(deep);
-                        model.setSleepStartTime(mSleepCurrenStartTime);
+                        model.setSleepStartTime(mSleepCurrentStartTime);
                         model.setSleepEndTime(mSleepCurrentEndTime);
                         mBleImp.onSuccess(BleCode.CURRENTSLEEP, model);
                     }
@@ -313,7 +329,14 @@ public class BleReceiver extends BroadcastReceiver {
                     }
                 }
             }
-
+        } else if (TextUtils.equals(BleContants.ACTION_BLE_SLEEP_SWITCH, action)) {
+            if (data != null && data.size() > 3) {
+                String state = "" + data.get(3);
+                BleLogs.i(TAG, "SLEEP SWITCH:" + state);
+                if (mBleImp != null) {
+                    mBleImp.onSuccess(BleCode.SLEEPSWITCH, state);
+                }
+            }
         }
     }
 }

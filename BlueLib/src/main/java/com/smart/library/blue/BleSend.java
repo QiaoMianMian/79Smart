@@ -300,4 +300,7 @@ public class BleSend {
         return BleUtils.writeToBle(context, BleDataset.setDeviceTime(date));
     }
 
+    public boolean sendSleepSumSwitch(Context context, int state) {
+        return BleUtils.writeToBle(context, BleDataset.setSleepSumSwitch(state));
+    }
 }

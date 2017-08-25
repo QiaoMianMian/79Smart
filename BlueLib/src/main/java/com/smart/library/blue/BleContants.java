@@ -88,4 +88,9 @@ public class BleContants {
      */
     public static final String ACTION_BLE_FLASH_CLEAR = "ACTION1b";
 
+    /**
+     * Sleep Switch
+     */
+    public static final String ACTION_BLE_SLEEP_SWITCH = "ACTION34";
+
 }

@@ -22,7 +22,9 @@
     <string name="current_step">Current Step</string>
     <string name="sync_history_step">Sync Step</string>
     <string name="history_step">History Step</string>
+    <string name="history_duration">History Duration(S)</string>
     <string name="current_sleep">Current Sleep</string>
+    <string name="sleep_switch">Sleep Switch</string>
     <string name="sync_history_sleep">Sync Sleep</string>
     <string name="history_sleep">History Sleep</string>
     <string name="tel_notify_open">Open Tel Notify</string>

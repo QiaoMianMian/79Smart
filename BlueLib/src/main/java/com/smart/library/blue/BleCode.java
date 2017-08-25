@@ -13,5 +13,6 @@ public enum BleCode {
     DEVICEVERSION,      //Device Version
     DEVICEBATTERY,      //Device Battery
     CLEARSTEPFLASH,     //Clear Step Flash
-    CLEARSLEEPFLASH     //Clear Sleep Flash
+    CLEARSLEEPFLASH,     //Clear Sleep Flash
+    SLEEPSWITCH          //Sleep Switch
 }

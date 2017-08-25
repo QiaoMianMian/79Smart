@@ -5,7 +5,7 @@ import android.database.sqlite.SQLiteDatabase;
 
 public class DbHelper extends DbHelperEx {
     public static final String DB_NAME = "blue_data.db";
-    public static int DB_VERSION = 1;
+    public static int DB_VERSION = 2;
     public static final String TB_STEP = "tb_step";
     public static final String TB_SLEEP = "tb_sleep";
     public static DbHelper instance = null;
@@ -35,7 +35,7 @@ public class DbHelper extends DbHelperEx {
     public void onCreateTables(SQLiteDatabase db) {
         db.execSQL("CREATE table IF NOT EXISTS "
                 + TB_STEP
-                + " (id INTEGER PRIMARY KEY AUTOINCREMENT,step INTEGER,time TEXT UNIQUE);");
+                + " (id INTEGER PRIMARY KEY AUTOINCREMENT,step INTEGER,time TEXT UNIQUE,duration INTEGER);");
 
         db.execSQL("CREATE table IF NOT EXISTS "
                 + TB_SLEEP

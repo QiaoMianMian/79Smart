@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:id="@+id/ll_main"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:orientation="vertical">
+    android:id="@+id/ll_main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -17,7 +17,7 @@
             android:layout_alignParentLeft="true"
             android:padding="10dip"
             android:textColor="@android:color/white"
-            android:textSize="16sp"/>
+            android:textSize="16sp" />
 
         <TextView
             android:id="@+id/blue_state"
@@ -26,7 +26,7 @@
             android:layout_alignParentRight="true"
             android:padding="10dip"
             android:textColor="@android:color/white"
-            android:textSize="16sp"/>
+            android:textSize="16sp" />
 
     </RelativeLayout>
 
@@ -43,7 +43,7 @@
                 android:id="@+id/tv_data"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="10dip"/>
+                android:padding="10dip" />
         </LinearLayout>
     </ScrollView>
 
@@ -70,7 +70,7 @@
                     android:layout_margin="5dip"
                     android:layout_weight="1"
                     android:onClick="onClick"
-                    android:text="@string/device_type"/>
+                    android:text="@string/device_type" />
 
                 <Button
                     android:id="@+id/btn_device_code"
@@ -79,7 +79,7 @@
                     android:layout_margin="5dip"
                     android:layout_weight="1"
                     android:onClick="onClick"
-                    android:text="@string/device_sn_code"/>
+                    android:text="@string/device_sn_code" />
 
             </LinearLayout>
 
@@ -96,7 +96,7 @@
                     android:layout_margin="5dip"
                     android:layout_weight="1"
                     android:onClick="onClick"
-                    android:text="@string/software_version"/>
+                    android:text="@string/software_version" />
 
                 <Button
                     android:id="@+id/btn_hardware_battery"
@@ -105,9 +105,14 @@
                     android:layout_margin="5dip"
                     android:layout_weight="1"
                     android:onClick="onClick"
-                    android:text="@string/battery"/>
+                    android:text="@string/battery" />
 
             </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:background="#858585" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -122,14 +127,16 @@
                     android:layout_margin="5dip"
                     android:layout_weight="1"
                     android:onClick="onClick"
-                    android:text="@string/current_step"/>
+                    android:text="@string/current_step" />
 
                 <Button
+                    android:id="@+id/btn_step_sync"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_margin="5dip"
                     android:layout_weight="1"
-                    android:visibility="invisible"/>
+                    android:onClick="onClick"
+                    android:text="@string/sync_history_step" />
 
             </LinearLayout>
 
@@ -140,15 +147,6 @@
                 android:orientation="horizontal">
 
                 <Button
-                    android:id="@+id/btn_step_sync"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_margin="5dip"
-                    android:layout_weight="1"
-                    android:onClick="onClick"
-                    android:text="@string/sync_history_step"/>
-
-                <Button
                     android:id="@+id/btn_history_step"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
@@ -156,9 +154,25 @@
                     android:layout_weight="1"
                     android:clickable="false"
                     android:onClick="onClick"
-                    android:text="@string/history_step"/>
+                    android:text="@string/history_step" />
+
+                <Button
+                    android:id="@+id/btn_history_duration"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_margin="5dip"
+                    android:layout_weight="1"
+                    android:clickable="false"
+                    android:onClick="onClick"
+                    android:text="@string/history_duration"
+                    android:textSize="12sp" />
 
             </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:background="#858585" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -173,14 +187,16 @@
                     android:layout_margin="5dip"
                     android:layout_weight="1"
                     android:onClick="onClick"
-                    android:text="@string/current_sleep"/>
+                    android:text="@string/current_sleep" />
 
                 <Button
+                    android:id="@+id/btn_sleep_switch"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_margin="5dip"
                     android:layout_weight="1"
-                    android:visibility="invisible"/>
+                    android:onClick="onClick"
+                    android:text="@string/sleep_switch" />
 
             </LinearLayout>
 
@@ -197,7 +213,7 @@
                     android:layout_margin="5dip"
                     android:layout_weight="1"
                     android:onClick="onClick"
-                    android:text="@string/sync_history_sleep"/>
+                    android:text="@string/sync_history_sleep" />
 
                 <Button
                     android:id="@+id/btn_history_sleep"
@@ -207,9 +223,14 @@
                     android:layout_weight="1"
                     android:clickable="false"
                     android:onClick="onClick"
-                    android:text="@string/history_sleep"/>
+                    android:text="@string/history_sleep" />
 
             </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:background="#858585" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -224,7 +245,7 @@
                     android:layout_margin="5dip"
                     android:layout_weight="1"
                     android:onClick="onClick"
-                    android:text="@string/upload_device"/>
+                    android:text="@string/upload_device" />
 
                 <Button
                     android:id="@+id/btn_reset"
@@ -233,7 +254,7 @@
                     android:layout_margin="5dip"
                     android:layout_weight="1"
                     android:onClick="onClick"
-                    android:text="@string/device_reset"/>
+                    android:text="@string/device_reset" />
             </LinearLayout>
 
             <ProgressBar
@@ -241,7 +262,7 @@
                 style="@android:style/Widget.Holo.ProgressBar.Horizontal"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:max="100"/>
+                android:max="100" />
         </LinearLayout>
     </ScrollView>
 </LinearLayout>

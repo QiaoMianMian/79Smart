@@ -26,13 +26,14 @@ public class DbUtils {
      * @param step
      * @param time
      */
-    public static void replaceStep(Context context, String step, String time) {
+    public static void replaceStep(Context context, String step, String time, long duration) {
         if (context == null || TextUtils.isEmpty(step) || TextUtils.isEmpty(time)) {
             return;
         }
         ContentValues cv = new ContentValues();
         cv.put("step", step);
         cv.put("time", time);
+        cv.put("duration", duration);
         try {
             DbHelper.getInstance(context).replace(DbHelper.TB_STEP, cv, "");
         } catch (DbException e) {
@@ -65,6 +66,33 @@ public class DbUtils {
             steps += step;
         }
         return steps;
+    }
+
+    /**
+     * Gets the number of durations for a day
+     * [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]  <==>  [0:00-23:00]
+     *
+     * @param context
+     * @param day     yyyy-MM-dd
+     * @return second
+     */
+    public static String getOneDayDurations(Context context, String day) {
+        String durations = "";
+        for (int i = 0; i < 24; i++) {
+            String j = "" + i;
+            if (i < 10) {
+                j = "0" + i;
+            }
+            String duration = "" + getPeriodDurations(context, day + " " + (j + ":00"), day + " " + (j + ":59"));
+            if (TextUtils.isEmpty(duration)) {
+                duration = "" + 0;
+            }
+            if (!TextUtils.isEmpty(durations)) {
+                durations += ",";
+            }
+            durations += duration;
+        }
+        return durations;
     }
 
     /**
@@ -118,6 +146,36 @@ public class DbUtils {
             }
         }
         return steps;
+    }
+
+    /**
+     * @param context   context
+     * @param startTime
+     * @param endTime
+     * @return period duration data(second)
+     */
+    private static int getPeriodDurations(Context context, String startTime, String endTime) {
+        int durations = 0;
+        Cursor cursor = DbHelper.getInstance(context).rawQuery("select * from " + DbHelper.TB_STEP + "  where time >= ? and time <= ?",
+                new String[]{startTime, endTime});
+        try {
+            if (cursor != null && cursor.getCount() > 0) {
+                for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()) {
+                    int duration = cursor.getInt(cursor.getColumnIndex("duration"));
+                    String time = cursor.getString(cursor.getColumnIndex("time"));
+                    BleLogs.i(TAG, time + ", " + duration);
+                    durations += duration;
+                }
+            }
+        } catch (Exception e) {
+            BleLogs.e(TAG, e.getMessage());
+            e.printStackTrace();
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+        return durations;
     }
 
     /**

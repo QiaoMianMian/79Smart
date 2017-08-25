@@ -91,4 +91,12 @@ public class BleString {
         return h * 256 + l;
     }
 
+    /**
+     * Duration Operation
+     */
+    public static int duration(int h, int l) {
+        if (h >= 255) h = 0;
+        return h * 60 + l;
+    }
+
 }
